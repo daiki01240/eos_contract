@@ -51,8 +51,42 @@ void cardgame::playcard(account_name username, uint8_t player_card_idx){
         int ai_card_idx = ai_choose_card(game_data);
         game_data.selected_card_ai = game_data.hand_ai[ai_card_idx];
         game_data.hand_ai[ai_card_idx] = 0;
+
+        resolve_selected_cards(game_data);
+        update_game_status(modified_user);
+    });
+}
+
+void cardgame::nextround(account_name username){
+    require_auth(username);
+
+    auto &user = _users.get(username,"User doesnt exist");
+
+    eosio_assert(user.game_data.status == ONGOING,"nextroud");
+    eosio_assert(user.game_data.selected_card_player !=0 && user.game_data.selected_card_ai != 0,"nextround: Please play acard first.");
+    
+    _users.modify(user, username, [&](auto &modified_user){
+        game & game_data = modified_user.game_data;
+
+        game_data.selected_card_player = 0;
+        game_data.selected_card_ai = 0;
+        game_data.life_lost_player = 0;
+        game_data.life_lost_ai = 0;
+
+        if(game_data.deck_player.size() > 0)draw_one_card(game_data.deck_player, game_data.hand_player);
+        if(game_data.deck_ai.size() > 0)draw_one_card(game_data.deck_ai, game_data.hand_ai);
+
+    });
+}
+
+void cardgame::endgame(account_name username){
+    require_auth(username);
+
+    auto &user = _users.get(username, "user doesnt exist");
+    _users.modify(user, username, [&](auto &modified_user) {
+        modified_user.game_data = game();
     });
 }
 
 
-EOSIO_ABI(cardgame, (login)(startgame)(playcard))
+EOSIO_ABI(cardgame, (login)(startgame)(playcard)(nextround)(endgame))

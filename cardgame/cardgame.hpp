@@ -110,6 +110,10 @@ class cardgame : public eosio::contract
 
     int ai_choose_card(const game& game_data);
 
+    void resolve_selected_cards(game &game_data);
+
+    void update_game_status(user_info& user);
+
     int random(const int range);
 
   public:
@@ -120,4 +124,8 @@ class cardgame : public eosio::contract
     void startgame(account_name username);
 
     void playcard(account_name username, uint8_t player_card_idx);
+
+    void nextround(account_name username);
+
+    void endgame(account_name username);
 };
