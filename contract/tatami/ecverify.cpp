@@ -1,4 +1,8 @@
-#include "tatami.hpp"
+#include <eosiolib/eosio.hpp>
+#include <eosiolib/print.hpp>
+#include <eosiolib/crypto.h>
+
+using namespace eosio;
 
 template<typename CharT>
 static std::string to_hex(const CharT* d, uint32_t s) {

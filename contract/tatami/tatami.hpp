@@ -13,21 +13,23 @@ class tatami : public eosio::contract
 {
     private:
       //@abi table schools
-      struct schoolaa
+      struct school1
       {
           uint64_t school_id;
-          std::string school_name;
-          std::string pub_key;
+          account_name school_name;
+          eosio::public_key pub_key;
 
           auto primary_key() const { return school_id; }
       };
 
       //@abi table students
-      struct studentaa
+      struct student1
       {
           account_name student_name;
-          vector<string> signature = {};
+          vector<signature> signature = {};
           vector<string> raw_type = {};
+          vector<string> photo = {};
+          vector<eosio::time_point_sec> time_stamp = {};
           uint64_t counter = 0;
           //   vector<cliam> claim;
           auto primary_key() const { return student_name; }
@@ -42,8 +44,8 @@ class tatami : public eosio::contract
 
     //   typedef std::string claim;
 
-      typedef eosio::multi_index<N(schools),schoolaa> schools_table;
-      typedef eosio::multi_index<N(students), studentaa> students_table;
+      typedef eosio::multi_index<N(schools),school1> schools_table;
+      typedef eosio::multi_index<N(students), student1> students_table;
 
       schools_table _schools;
       students_table _students;
@@ -51,13 +53,11 @@ class tatami : public eosio::contract
     public:
       tatami(account_name self) : contract(self), _schools(self, self), _students(self, self){}
 
-      void registersh(account_name school_name, std::string pub_key);
+      void registersh(account_name school_name, const eosio::public_key &pk);
 
       void registerst(account_name student_name);
 
-      void addclaim(account_name student_name, std::string signature, std::string row_type);
+      void addclaim(account_name student_name, const signature &sig, std::string raw_type);
 
-      void verifyclaim(account_name student_name, uint64_t index);
-
-
+      void verifyclaim(account_name student_name, uint64_t index, const eosio::public_key &pk);
 };

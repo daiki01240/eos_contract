@@ -112,8 +112,8 @@ private:
   typedef eosio::multi_index<N(memov2), memov2> memos2;
   typedef eosio::multi_index<N(point), point> points;
 
-  memos _memos; 
-  memos2 _memos2; 
+  memos _memos;
+  memos2 _memos2;
   points _points;
 };
 
